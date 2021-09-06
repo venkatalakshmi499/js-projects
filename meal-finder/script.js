@@ -2,13 +2,12 @@ const search=document.getElementById('search');
 const submit=document.getElementById('submit');
 const random=document.getElementById('random');
 const mealEl=document.getElementById('meals');
-const resultHeading=document.getElementsByClassName('result-heading');
+const resultHeading=document.getElementById('result-heading');
 const single_meal=document.getElementById('single-meal');
 
 //searchMeal
 function searchMeal(e){
     e.preventDefault();
-
     //clear single meal
     single_meal.innerHTML="";
 
@@ -23,6 +22,7 @@ function searchMeal(e){
             resultHeading.innerHTML=`<h2>Search Result for ${term} </h2>`;
             if(data.meals==null){
                 resultHeading.innerHTML=`<h2>There are no Results for ${term} </h2>`
+                mealEl.innerHTML="";
             }
             else{
                 mealEl.innerHTML=data.meals.map(
@@ -47,6 +47,7 @@ function searchMeal(e){
 function getMealById(mealId){
     fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${mealId}`)
     .then(res=>res.json()).then(data=>{
+       
         const meal=data.meals[0];
         addMealToDOM(meal);
     });
@@ -83,11 +84,12 @@ ${meal.strCategory ? `<p>${meal.strCategory}</p>`:''}
 ${meal.strArea ? `<p>${meal.strArea}</p>`:''}
 </div>
 <div class="main">
-<p>${meal.strInstructions}</p>
 <h2>Ingredients</h2>
 <ul>
 ${ingredients.map(ing=>`<li>${ing}</li>`).join('')}
 </ul>
+<p>${meal.strInstructions}</p>
+
 </div>
 </div>
 `
@@ -99,7 +101,9 @@ submit.addEventListener('submit',searchMeal);
 random.addEventListener('click',randomMeal);
 mealEl.addEventListener('click',e=>{
     const mealInfo=e.path.find((item)=>{
+        console.log(item);
         if(item.classList){
+            
             return item.classList.contains("meal-info");
         }
         else{
